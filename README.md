@@ -88,8 +88,8 @@ Set [multiple tags](https://docs.sentry.io/enriching-error-data/context/?platfor
 
 ```js
 ved.setUser({
-  key1: 'value1',
-  key2: 'value2',
+  id: '11211',
+  ip_address: '127.0.0.1',
 });
 ```
 
