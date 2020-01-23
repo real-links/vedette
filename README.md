@@ -277,9 +277,9 @@ const server = new ApolloServer({
     if (result.errors) {
       result.errors = result.errors.forEach(err => {
         if (err.originalError) {
-          ctx.ved.captureException(err.originalError);
+          (ctx.ved || Vedette).captureException(err.originalError);
         } else {
-          ctx.ved.captureException(err);
+          (ctx.ved || Vedette).captureException(err);
         }
       });
     }
@@ -308,8 +308,11 @@ module.exports.handler1 = function handler1(event, context, callback) {
     throw new Error('These are not the droids you are looking for, move along');
     callback();
   } catch (err) {
+    // Capture the exception
     ved.captureException(err);
+    // Push the exception to Sentry before Lambda finishes
     await Sentry.flush(2000);
+    // Trigger the callback
     callback(err);
   }
 };
@@ -319,8 +322,11 @@ module.exports.handler2 = function handler2(event, context, callback) {
     throw new Error('These are not the droids you are looking for, move along');
     callback();
   } catch (err) {
-    Vedette.captureException(err);
+    // Capture the exception
+    ved.captureException(err);
+    // Push the exception to Sentry before Lambda finishes
     await Sentry.flush(2000);
+    // Trigger the callback
     callback(err);
   }
 };
