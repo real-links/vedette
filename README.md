@@ -1,5 +1,7 @@
 # @real-links/vedette
 
+[![CircleCI](https://circleci.com/gh/real-links/vedette.svg?style=svg)](https://circleci.com/gh/real-links/vedette)
+
 Self-managed scope management for [@sentry/node](https://npm.im/@sentry/node).
 
 > **Vedette:** A mounted sentry positioned beyond an army's outposts to observe the movements of the enemy.
