@@ -1,6 +1,7 @@
 # vedette
 
-[![Test](https://github.com/someimportantcompany/vedette/workflows/Test/badge.svg?event=push)](https://github.com/someimportantcompany/vedette/actions)
+[![npm](https://badge.fury.io/js/vedette.svg)](https://npm.im/vedette)
+[![actions](https://github.com/someimportantcompany/vedette/workflows/Test/badge.svg?event=push)](https://github.com/someimportantcompany/vedette/actions?query=branch%3Amaster)
 
 Self-managed scope management for [@sentry/node](https://npm.im/@sentry/node).
 
