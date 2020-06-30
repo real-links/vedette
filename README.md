@@ -1,6 +1,6 @@
-# @real-links/vedette
+# vedette
 
-[![CircleCI](https://circleci.com/gh/real-links/vedette.svg?style=svg)](https://circleci.com/gh/real-links/vedette)
+[![Test](https://github.com/someimportantcompany/vedette/workflows/Test/badge.svg?event=push)](https://github.com/someimportantcompany/vedette/actions)
 
 Self-managed scope management for [@sentry/node](https://npm.im/@sentry/node).
 
@@ -8,7 +8,7 @@ Self-managed scope management for [@sentry/node](https://npm.im/@sentry/node).
 
 ```js
 const Sentry = require('@sentry/node');
-const Vedette = require('@real-links/vedette');
+const Vedette = require('vedette');
 
 Sentry.init({
   environment: process.env.NODE_ENV || 'development',
@@ -182,7 +182,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const Sequelize = require('sequelize');
 const Sentry = require('@sentry/node');
-const Vedette = require('@real-links/vedette');
+const Vedette = require('vedette');
 
 Sentry.init({
   environment: process.env.NODE_ENV || 'development',
@@ -226,7 +226,7 @@ app.listen(8080, () => console.log('🚀  Server ready at http://localhost:3000/
 
 ```js
 const Sentry = require('@sentry/node');
-const Vedette = require('@real-links/vedette');
+const Vedette = require('vedette');
 const { ApolloServer, gql } = require('apollo-server');
 
 Sentry.init({
@@ -297,7 +297,7 @@ server.listen().then(({ url }) => console.log(`🚀  Server ready at ${url}`));
 
 ```js
 const Sentry = require('@sentry/node');
-const Vedette = require('@real-links/vedette');
+const Vedette = require('vedette');
 
 Sentry.init({
   environment: process.env.NODE_ENV || 'development',
