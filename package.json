@@ -1,21 +1,20 @@
 {
-  "name": "@real-links/vedette",
+  "name": "vedette",
   "description": "Self-managed scope management for @sentry/node.",
   "version": "1.0.0",
   "scripts": {
     "lint": "eslint .",
-    "test": "istanbul cover -x *.test.js _mocha -- *.test.js",
-    "posttest": "istanbul check-coverage"
+    "test": "nyc --reporter lcov --reporter text --exclude *.test.js mocha -- *.test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/real-links/vedette.git"
+    "url": "git+https://github.com/someimportantcompany/vedette.git"
   },
   "bugs": {
-    "url": "https://github.com/real-links/vedette/issues"
+    "url": "https://github.com/someimportantcompany/vedette/issues"
   },
-  "author": "Real Links <engineering@reallinks.io> (https://real-links.github.io)",
-  "license": "SEE LICENSE IN ./LICENSE",
+  "author": "James D <james@jdrydn.com> (https://jdrydn.com)",
+  "license": "MIT",
   "dependencies": {
     "@sentry/minimal": "^5.11.1"
   },
@@ -29,14 +28,15 @@
     "eslint-plugin-mocha": "^5.2.1",
     "eslint-plugin-sort-requires": "^2.1.0",
     "http-errors": "^1.7.3",
-    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^5.2.0",
     "nock": "^11.7.2",
     "nodemon": "^1.18.7",
+    "nyc": "^15.1.0",
     "rewire": "^4.0.1",
     "uuid": "^3.4.0"
   },
   "engines": {
-    "node": ">= 10.0"
+    "node": ">= 10.0",
+    "npm": ">= 6.0"
   }
 }
