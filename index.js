@@ -39,7 +39,6 @@ module.exports = class Vedette {
     this.breadcrumbs.push({ timestamp, ...crumb });
     return this;
   }
-
   clearBreadcrumbs() {
     this.breadcrumbs = [];
     return this;
@@ -69,10 +68,11 @@ module.exports = class Vedette {
   }
 
   populateSentryScope(scope) {
-    return this.breadcrumbs.reduce((s, b) => s.addBreadcrumb(b), scope)
-      .setTags(this.tags)
-      .setExtras(this.extra)
-      .setUser(this.user);
+    this.breadcrumbs.reduce((s, crumb) => s.addBreadcrumb(crumb), scope);
+
+    scope.setTags(this.tags);
+    scope.setUser(this.user);
+    scope.setExtras(this.extra);
   }
 
   captureException(...args) {
