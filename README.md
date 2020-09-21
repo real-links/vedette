@@ -3,7 +3,7 @@
 [![npm](https://badge.fury.io/js/vedette.svg)](https://npm.im/vedette)
 [![actions](https://github.com/someimportantcompany/vedette/workflows/Test/badge.svg?event=push)](https://github.com/someimportantcompany/vedette/actions?query=branch%3Amaster)
 
-Self-managed scope management for [@sentry/node](https://npm.im/@sentry/node).
+Self-managed scope management for [@sentry/node](https://npm.im/@sentry/node) 🦾
 
 > **Vedette:** A mounted sentry positioned beyond an army's outposts to observe the movements of the enemy.
 
@@ -11,9 +11,7 @@ Self-managed scope management for [@sentry/node](https://npm.im/@sentry/node).
 const Sentry = require('@sentry/node');
 const Vedette = require('vedette');
 
-Sentry.init({
-  environment: process.env.NODE_ENV || 'development',
-});
+Sentry.init();
 
 const ved = new Vedette();
 
@@ -27,6 +25,15 @@ ved.setExtras({ code: 'DROIDS_NOT_FOUND' });
 
 ved.captureException(new Error('These are not the droids you are looking for, move along'));
 ved.captureMessage('These are not the droids you are looking for, move along');
+
+Vedette.captureException(new Error('These are not the droids you are looking for, move along'), {
+  user: { ip_address: '127.0.0.1' },
+  level: 'fatal',
+});
+Vedette.captureMessage('These are not the droids you are looking for, move along', {
+  user: { id: '11211' },
+  level: 'warning',
+});
 ```
 
 ## Installation
@@ -37,9 +44,9 @@ $ npm install --save vedette
 
 ## Why?
 
-Currently, [@sentry/node](https://npm.im/@sentry/node) doesn't appear to allow you to pass a scope as an argument, instead [continuing to use](https://github.com/getsentry/sentry-javascript/issues/1294) [the deprecated domains module](https://github.com/getsentry/raven-node/issues/264). They have their (good) reasons, however they still could allow scopes to be portable for those that don't want to use domains in their code.
+Currently, [@sentry/node](https://npm.im/@sentry/node) doesn't appear to you to pass a scope as an argument, instead [continuing to use](https://github.com/getsentry/sentry-javascript/issues/1294) [the deprecated domains module](https://github.com/getsentry/raven-node/issues/264). They have their (good) reasons, however they still could allow scopes to be portable for those that don't want to use domains in their code.
 
-This library attempts to solve this by wrapping around the default scope functions & calling `withScope` before `captureException`/`captureMessage` to include all your locally-set properties. This is designed to work in request/response or GraphQL environments, however it's relatively agnostic & can be used anywhere.
+This library attempts to solve this by wrapping around the default scope functions & calling `withScope` before `captureException`/`captureMessage` to include all your locally-set properties. It also offers a couple of static methods to send errors/messages in one invocation.
 
 ## API
 
@@ -115,7 +122,25 @@ ved.setExtras({
 });
 ```
 
-Set [multiple extra properties](https://docs.sentry.io/enriching-error-data/context/?platform=node#extra-context).
+#### ved.setLevel
+
+```js
+ved.setLevel('warning');
+```
+
+Set [a level](https://docs.sentry.io/platforms/node/enriching-error-data/additional-data/set-level/) for all particular errors & messages. Less useful in this form, more useful with [`Vedette.captureException`](#vedettecaptureexception) & [`Vedette.captureMessage`](#vedettecapturemessage).
+
+[Levels directly from `@sentry/types`](https://github.com/getsentry/sentry-javascript/blob/6229e27/packages/types/src/severity.ts#L3-L18):
+
+```
+debug
+log
+info
+warning
+error
+fatal
+critical
+```
 
 #### ved.populateSentryScope
 
@@ -151,9 +176,14 @@ For convenience, there are some static methods to complete common scenarios.
 Vedette.captureException(new Error('These are not the droids you are looking for, move along'));
 
 Vedette.captureException(new Error('These are not the droids you are looking for, move along'), {
+  // Optional tags
   tags: { tag1: 'value1' },
+  // Optional user
   user: { id: '11211' },
+  // Optional extras
   extra: { extra2: 'value2' },
+  // Optional level
+  level: 'fatal',
 });
 ```
 
@@ -165,9 +195,14 @@ Capture an exception, optionally throwing some tags, user & extra data into the 
 Vedette.captureMessage('These are not the droids you are looking for, move along');
 
 Vedette.captureMessage('These are not the droids you are looking for, move along', {
+  // Optional tags
   tags: { tag1: 'value1' },
+  // Optional user
   user: { id: '11211' },
+  // Optional extras
   extra: { extra2: 'value2' },
+  // Optional level
+  level: 'warning',
 });
 ```
 
@@ -333,4 +368,36 @@ module.exports.handler2 = function handler2(event, context, callback) {
     callback(err);
   }
 };
+```
+
+### Vue.js (2.x) Example
+
+```js
+import Vue from 'vue';
+import * as Sentry from '@sentry/browser';
+import { Vue as VueIntegration } from '@sentry/integrations';
+import Vedette from 'vedette';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  integrations: [ new VueIntegration({ Vue, attachProps: true }) ],
+});
+
+const app = new Vue({
+  computed: {
+    ved: () => new Vedette(),
+  },
+  mounted() {
+    this.ved.setTag('origin', window.location.origin);
+    this.ved.setUser({ id: '11211' });
+  },
+  methods: {
+    sendException() {
+      const err = new Error('These are not the droids you are looking for, move along');
+      this.ved.captureException(err);
+    },
+  },
+});
+
+app.$mount('#app');
 ```
