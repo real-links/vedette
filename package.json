@@ -1,7 +1,7 @@
 {
   "name": "vedette",
   "description": "Self-managed scope management for @sentry/node",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "scripts": {
     "lint": "eslint .",
     "test": "nyc --reporter lcov --reporter text --exclude *.test.js mocha -- *.test.js"
@@ -13,10 +13,10 @@
   "bugs": {
     "url": "https://github.com/someimportantcompany/vedette/issues"
   },
-  "main": "./index.js",
+  "main": "index.js",
   "files": [
-    "./README.md",
-    "./index.js"
+    "README.md",
+    "index.js"
   ],
   "author": "James D <james@jdrydn.com> (https://jdrydn.com)",
   "license": "MIT",
