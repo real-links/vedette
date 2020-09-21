@@ -13,6 +13,11 @@
   "bugs": {
     "url": "https://github.com/someimportantcompany/vedette/issues"
   },
+  "main": "./index.js",
+  "files": [
+    "./README.md",
+    "./index.js"
+  ],
   "author": "James D <james@jdrydn.com> (https://jdrydn.com)",
   "license": "MIT",
   "dependencies": {
