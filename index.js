@@ -1,5 +1,7 @@
 const Sentry = require('@sentry/minimal');
 
+const ALLOWED_LEVELS = [ 'critical', 'fatal', 'error', 'warning', 'info', 'log', 'debug' ];
+
 module.exports = class Vedette {
 
   static captureException(err, additional = {}) {
@@ -9,7 +11,7 @@ module.exports = class Vedette {
     return (new Vedette(additional)).captureMessage(msg);
   }
 
-  constructor({ tags = {}, user = {}, extra = {} } = {}) {
+  constructor({ tags = {}, user = {}, extra = {}, level = null } = {}) {
     Object.defineProperties(this, {
       breadcrumbs: {
         enumerable: true,
@@ -30,6 +32,11 @@ module.exports = class Vedette {
         enumerable: true,
         writable: true,
         value: extra,
+      },
+      level: {
+        enumerable: true,
+        writable: true,
+        value: typeof level === 'string' ? level : null,
       },
     });
   }
@@ -67,12 +74,21 @@ module.exports = class Vedette {
     return this;
   }
 
+  setLevel(level) {
+    this.level = typeof level === 'string' ? level : null;
+    return this;
+  }
+
   populateSentryScope(scope) {
     this.breadcrumbs.reduce((s, crumb) => s.addBreadcrumb(crumb), scope);
 
     scope.setTags(this.tags);
     scope.setUser(this.user);
     scope.setExtras(this.extra);
+
+    if (typeof this.level === 'string' && ALLOWED_LEVELS.includes(this.level)) {
+      scope.setLevel(this.level);
+    }
   }
 
   captureException(...args) {

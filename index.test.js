@@ -15,11 +15,12 @@ nock('https://sentry.io:443')
   .post('/api/11211/store/')
   .reply(200, { id: uuid() });
 
-function assertVedette(ved, { breadcrumbs = [], tags = {}, user = {}, extra = {} } = {}) {
+function assertVedette(ved, { breadcrumbs = [], tags = {}, user = {}, extra = {}, level = null } = {}) {
   assert.deepStrictEqual(ved.breadcrumbs, breadcrumbs, 'Breadcrumbs array does not deepStrictEqual');
   assert.deepStrictEqual(ved.tags, tags, 'Tags object does not deepStrictEqual');
   assert.deepStrictEqual(ved.user, user, 'User object does not deepStrictEqual');
   assert.deepStrictEqual(ved.extra, extra, 'Extra object does not deepStrictEqual');
+  assert.strictEqual(ved.level, level, 'Level string does not strictEqual');
 }
 
 describe('Vedette', () => {
@@ -137,6 +138,29 @@ describe('Vedette', () => {
 
   });
 
+  describe('#level', () => {
+
+    it('should set the level', () => {
+      const ved = new Vedette();
+      ved.setLevel('warning');
+      assertVedette(ved, { level: 'warning' });
+    });
+
+    it('should set then clear the level', () => {
+      const ved = new Vedette();
+
+      ved.setLevel('warning');
+      assertVedette(ved, { level: 'warning' });
+
+      ved.setLevel(1);
+      assertVedette(ved, { level: null });
+
+      ved.setLevel(null);
+      assertVedette(ved, { level: null });
+    });
+
+  });
+
   describe('#populateSentryScope', () => {
 
     class FakeSentryScope {
@@ -162,6 +186,11 @@ describe('Vedette', () => {
             writable: true,
             value: {},
           },
+          level: {
+            enumerable: true,
+            writable: true,
+            value: null,
+          },
         });
       }
       addBreadcrumb(crumb) {
@@ -178,6 +207,10 @@ describe('Vedette', () => {
       }
       setExtras(extra) {
         this.extra = extra;
+        return this;
+      }
+      setLevel(level) {
+        this.level = level;
         return this;
       }
     }
@@ -198,6 +231,7 @@ describe('Vedette', () => {
       ved.setTags({ tag1: 'value1' });
       ved.setUser({ id: 'some-id', ip_address: '127.0.0.1' });
       ved.setExtras({ extra1: 'value1' });
+      ved.setLevel('warning');
 
       ved.populateSentryScope(scope);
 
@@ -206,6 +240,7 @@ describe('Vedette', () => {
         tags: { tag1: 'value1' },
         user: { id: 'some-id', ip_address: '127.0.0.1' },
         extra: { extra1: 'value1' },
+        level: 'warning',
       });
     });
 
@@ -218,6 +253,7 @@ describe('Vedette', () => {
         tags: { tag1: 'value1' },
         user: { id: 'some-id', ip_address: '127.0.0.1' },
         extra: { extra1: 'value1' },
+        level: 'fatal',
       });
 
       const err = createError(404, new Error('These are not the droids you are looking for, move along'), {
@@ -246,6 +282,8 @@ describe('Vedette', () => {
         code: 'DROIDS_NOT_FOUND',
       });
 
+      Vedette.captureException(err);
+
       Vedette.captureException(err, {
         tags: { tag1: 'value1' },
         user: { id: 'some-id', ip_address: '127.0.0.1' },
@@ -254,6 +292,8 @@ describe('Vedette', () => {
     });
 
     it('should send a Vedette-filled message to Sentry', () => {
+      Vedette.captureMessage('This is the way');
+
       Vedette.captureMessage('This is the way', {
         tags: { tag1: 'value1' },
         user: { id: 'some-id', ip_address: '127.0.0.1' },
