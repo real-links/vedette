@@ -154,6 +154,17 @@ Transfer the breadcrumbs, tags, user & extra data to the Sentry scope.
 
 ```js
 ved.captureException(new Error('These are not the droids you are looking for, move along'));
+
+ved.captureException(new Error('These are not the droids you are looking for, move along'), {
+  // Optional tags
+  tags: { tag1: 'value1' },
+  // Optional user
+  user: { id: '11211' },
+  // Optional extras
+  extra: { extra2: 'value2' },
+  // Optional level
+  level: 'fatal',
+});
 ```
 
 Capture an exception, transferring the breadcrumbs, tags, user & extra data to the Sentry scope before sending.
@@ -162,6 +173,17 @@ Capture an exception, transferring the breadcrumbs, tags, user & extra data to t
 
 ```js
 ved.captureMessage('These are not the droids you are looking for, move along');
+
+ved.captureMessage('These are not the droids you are looking for, move along', {
+  // Optional tags
+  tags: { tag1: 'value1' },
+  // Optional user
+  user: { id: '11211' },
+  // Optional extras
+  extra: { extra2: 'value2' },
+  // Optional level
+  level: 'fatal',
+});
 ```
 
 Capture a message, transferring the breadcrumbs, tags, user & extra data to the Sentry scope before sending.
