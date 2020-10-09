@@ -4,11 +4,11 @@ const ALLOWED_LEVELS = [ 'critical', 'fatal', 'error', 'warning', 'info', 'log',
 
 module.exports = class Vedette {
 
-  static captureException(err, additional = {}) {
-    return (new Vedette(additional)).captureException(err);
+  static captureException(err, additional = null) {
+    return (new Vedette()).captureException(err, additional);
   }
-  static captureMessage(msg, additional = {}) {
-    return (new Vedette(additional)).captureMessage(msg);
+  static captureMessage(msg, additional = null) {
+    return (new Vedette()).captureMessage(msg, additional);
   }
 
   constructor({ tags = {}, user = {}, extra = {}, level = null } = {}) {
@@ -79,30 +79,31 @@ module.exports = class Vedette {
     return this;
   }
 
-  populateSentryScope(scope) {
+  populateSentryScope(scope, additional = null) {
     this.breadcrumbs.reduce((s, crumb) => s.addBreadcrumb(crumb), scope);
 
-    scope.setTags(JSON.parse(JSON.stringify(this.tags)));
-    scope.setUser(JSON.parse(JSON.stringify(this.user)));
-    scope.setExtras(JSON.parse(JSON.stringify(this.extra)));
+    const { tags, user, extra, level } = { ...additional };
+    scope.setTags(JSON.parse(JSON.stringify({ ...this.tags, ...tags })));
+    scope.setUser(JSON.parse(JSON.stringify({ ...this.user, ...user })));
+    scope.setExtras(JSON.parse(JSON.stringify({ ...this.extra, ...extra })));
 
-    if (typeof this.level === 'string' && ALLOWED_LEVELS.includes(this.level)) {
-      scope.setLevel(this.level);
+    if (typeof (this.level || level) === 'string' && ALLOWED_LEVELS.includes(this.level || level)) {
+      scope.setLevel(this.level || level);
     }
   }
 
-  captureException(...args) {
+  captureException(err, additional = null) {
     Sentry.withScope(scope => {
-      this.populateSentryScope(scope);
-      Sentry.captureException(...args);
+      this.populateSentryScope(scope, additional);
+      Sentry.captureException(err);
     });
     return this;
   }
 
-  captureMessage(...args) {
+  captureMessage(message, additional = null) {
     Sentry.withScope(scope => {
-      this.populateSentryScope(scope);
-      Sentry.captureMessage(...args);
+      this.populateSentryScope(scope, additional);
+      Sentry.captureMessage(message);
     });
     return this;
   }
