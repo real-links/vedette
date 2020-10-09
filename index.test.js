@@ -244,6 +244,26 @@ describe('Vedette', () => {
       });
     });
 
+    it('should drop `undefined` attributes when populating the Sentry scope', () => {
+      const scope = new FakeSentryScope();
+      const ved = new Vedette();
+
+      const timestamp = Math.floor(Date.now() / 1000);
+      ved.addBreadcrumb({ type: 'info', message: 'The Force will be with you, always' });
+      ved.setTags({ tag1: 'value1', tag2: undefined, tag3: 'value3' });
+      ved.setUser({ id: undefined, ip_address: '127.0.0.1' });
+      ved.setExtras({ extra1: 'value1', extra2: undefined, extra3: 'value3' });
+
+      ved.populateSentryScope(scope);
+
+      assertVedette(scope, {
+        breadcrumbs: [ { timestamp, type: 'info', message: 'The Force will be with you, always' } ],
+        tags: { tag1: 'value1', tag3: 'value3' },
+        user: { ip_address: '127.0.0.1' },
+        extra: { extra1: 'value1', extra3: 'value3' },
+      });
+    });
+
   });
 
   describe('#captureException #captureMessage', () => {

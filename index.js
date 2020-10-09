@@ -82,9 +82,9 @@ module.exports = class Vedette {
   populateSentryScope(scope) {
     this.breadcrumbs.reduce((s, crumb) => s.addBreadcrumb(crumb), scope);
 
-    scope.setTags(this.tags);
-    scope.setUser(this.user);
-    scope.setExtras(this.extra);
+    scope.setTags(JSON.parse(JSON.stringify(this.tags)));
+    scope.setUser(JSON.parse(JSON.stringify(this.user)));
+    scope.setExtras(JSON.parse(JSON.stringify(this.extra)));
 
     if (typeof this.level === 'string' && ALLOWED_LEVELS.includes(this.level)) {
       scope.setLevel(this.level);
