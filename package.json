@@ -26,7 +26,7 @@
     "@sentry/minimal": "^5.11.1"
   },
   "devDependencies": {
-    "@sentry/node": "^5.11.1",
+    "@sentry/node": "^5.27.2",
     "babel-eslint": "^10.0.3",
     "chai": "^4.2.0",
     "coveralls": "^3.0.2",
