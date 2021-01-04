@@ -3,6 +3,14 @@
 [![npm](https://badge.fury.io/js/vedette.svg)](https://npm.im/vedette)
 [![actions](https://github.com/someimportantcompany/vedette/workflows/Test/badge.svg?event=push)](https://github.com/someimportantcompany/vedette/actions?query=branch%3Amaster)
 
+---
+
+**Hi there 👋**
+
+As of [November 2020](https://github.com/getsentry/sentry-javascript/issues/1372#issuecomment-719924038), Sentry supports adding specific information [to the context on each captured error](https://docs.sentry.io/platforms/node/enriching-events/context/#passing-context-directly), so this package has been archived & deprecated.
+
+---
+
 Self-managed scope management for [@sentry/node](https://npm.im/@sentry/node) 🦾
 
 > **Vedette:** A mounted sentry positioned beyond an army's outposts to observe the movements of the enemy.
@@ -39,7 +47,7 @@ Vedette.captureMessage('These are not the droids you are looking for, move along
 ## Installation
 
 ```
-$ npm install --save vedette
+$ npm install --save git+https://github.com/someimportantcompany/vedette#1.1.3
 ```
 
 ## Why?
